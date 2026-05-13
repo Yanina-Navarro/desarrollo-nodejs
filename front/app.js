@@ -67,6 +67,41 @@ async function deleteUser(id) {
 
   }
 }
+async function editUser(id, currentName, currentEmail) {
+
+  const newName = prompt("Nuevo nombre:", currentName);
+
+  if (!newName) return;
+
+  const newEmail = prompt("Nuevo email:", currentEmail);
+
+  if (!newEmail) return;
+
+  try {
+
+    await fetch(`${API_URL}/users/${id}`, {
+
+      method: "PUT",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        name: newName,
+        email: newEmail
+      })
+
+    });
+
+    getUsers();
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+}
 
 async function getUsers() {
 
@@ -95,9 +130,17 @@ async function getUsers() {
             ${user.name} - ${user.email}
           </span>
 
-          <button onclick="deleteUser('${user._id}')">
-            Eliminar
-          </button>
+<div class="actions">
+
+  <button onclick="editUser('${user._id}', '${user.name}', '${user.email}')">
+    Editar
+  </button>
+
+  <button onclick="deleteUser('${user._id}')">
+    Eliminar
+  </button>
+
+</div>
 
         </div>
       `;
@@ -282,8 +325,3 @@ async function getMessages(chatId) {
 
   }
 }
-
-
-getUsers();
-
-getChats();

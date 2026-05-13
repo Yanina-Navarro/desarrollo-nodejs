@@ -59,3 +59,42 @@ export const deleteUser = async (req, res, next) => {
     next(error);
   }
 };
+export const updateUser = async (req, res, next) => {
+
+  try {
+
+    const { name, email } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        name,
+        email
+      },
+      {
+        new: true
+      }
+    );
+
+    if (!user) {
+
+      return res.status(404).json({
+        success: false,
+        message: "Usuario no encontrado",
+        data: null
+      });
+
+    }
+
+    res.json({
+      success: true,
+      message: "Usuario actualizado",
+      data: user
+    });
+
+  } catch (error) {
+
+    next(error);
+
+  }
+};

@@ -88,3 +88,12 @@ li:hover {
   margin-bottom: 10px;
   border-radius: 10px;
 }
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.actions button {
+  width: auto;
+}
