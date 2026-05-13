@@ -1,101 +1,89 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
   getChats,
   createChat,
-  getUsers,
 } from "../services/api";
 
-function Chats({ setSelectedChat }) {
+function Chats({
+  selectedChat,
+  setSelectedChat,
+}) {
+
   const [chats, setChats] = useState([]);
 
-  const [users, setUsers] = useState([]);
-
-  const [selectedUsers, setSelectedUsers] =
-    useState([]);
+  const [chatName, setChatName] =
+    useState("");
 
   async function loadChats() {
+
     const data = await getChats();
 
     setChats(data);
-  }
 
-  async function loadUsers() {
-    const data = await getUsers();
-
-    setUsers(data);
   }
 
   async function handleCreateChat() {
-    if (selectedUsers.length < 2) return;
 
-    await createChat(selectedUsers);
+    if (!chatName) return;
 
-    setSelectedUsers([]);
+    await createChat(chatName, []);
+
+    setChatName("");
 
     loadChats();
-  }
 
-  function handleSelectUser(id) {
-    if (selectedUsers.includes(id)) {
-      setSelectedUsers(
-        selectedUsers.filter(
-          (userId) => userId !== id
-        )
-      );
-    } else {
-      setSelectedUsers([
-        ...selectedUsers,
-        id,
-      ]);
-    }
   }
-
-  useEffect(() => {
-    loadChats();
-    loadUsers();
-  }, []);
 
   return (
     <div className="card">
+
       <h2>Chats</h2>
 
-      <div>
-        <h4>Seleccionar usuarios</h4>
+      <button onClick={loadChats}>
+        Obtener Chats
+      </button>
 
-        {users.map((user) => (
-          <div key={user._id}>
-            <input
-              type="checkbox"
-              onChange={() =>
-                handleSelectUser(user._id)
-              }
-            />
+      <input
+        type="text"
+        placeholder="Nombre del chat"
+        value={chatName}
+        onChange={(e) =>
+          setChatName(e.target.value)
+        }
+      />
 
-            {user.name}
-          </div>
-        ))}
-
-        <button onClick={handleCreateChat}>
-          Crear Chat
-        </button>
-      </div>
+      <button onClick={handleCreateChat}>
+        Crear Chat
+      </button>
 
       <ul>
         {chats.map((chat) => (
           <li
             key={chat._id}
+            className={`
+              chat-item
+              ${
+                selectedChat?._id ===
+                chat._id
+                  ? "active-chat"
+                  : ""
+              }
+            `}
             onClick={() =>
               setSelectedChat(chat)
             }
-            className="chat-item"
           >
-            Chat: {chat._id}
+            <strong>
+              {chat.name}
+            </strong>
           </li>
         ))}
       </ul>
+
     </div>
   );
+
 }
 
 export default Chats;

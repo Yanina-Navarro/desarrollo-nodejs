@@ -4,7 +4,7 @@ import Users from "./components/Users";
 import Chats from "./components/Chats";
 import Messages from "./components/Messages";
 
-import "./styles/app.css";
+import "../src/styles/app.css";
 
 function App() {
   const [selectedChat, setSelectedChat] =

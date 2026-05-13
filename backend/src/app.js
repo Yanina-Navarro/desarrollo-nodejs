@@ -19,12 +19,14 @@ server.use("/chats", chatsRoutes);
 
 server.use("/messages", messagesRoutes);
 
-connectMongoDB();
+await connectMongoDB();
 
 server.listen(5000, () => {
+
   console.log(
     "Servidor corriendo en http://localhost:5000"
   );
+
 });
 
 export default server;

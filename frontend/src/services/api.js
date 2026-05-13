@@ -56,10 +56,13 @@ export const createChat = async (
   name,
   users
 ) => {
-  const response = await api.post("/chats", {
-    name,
-    users,
-  });
+  const response = await api.post(
+    "/chats",
+    {
+      name,
+      users,
+    }
+  );
 
   return response.data.data;
 };

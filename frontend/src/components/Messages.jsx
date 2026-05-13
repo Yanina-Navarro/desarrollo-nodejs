@@ -44,14 +44,35 @@ function Messages({ selectedChat }) {
 
     loadMessages();
   }
+useEffect(() => {
+  loadMessages();
+}, [selectedChat]);
 
-  useEffect(() => {
-    loadMessages();
-  }, [selectedChat]);
+useEffect(() => {
 
-  useEffect(() => {
+  loadUsers();
+
+  const interval = setInterval(() => {
+
     loadUsers();
-  }, []);
+
+  }, 2000);
+
+  return () => clearInterval(interval);
+
+}, []);
+
+useEffect(() => {
+
+  const userExists = users.some(
+    (user) => user._id === userId
+  );
+
+  if (!userExists) {
+    setUserId("");
+  }
+
+}, [users]);
 
   return (
     <div className="card">

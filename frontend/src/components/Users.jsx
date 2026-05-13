@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
   getUsers,
   createUser,
   deleteUser,
+  updateUser,
 } from "../services/api";
 
 function Users() {
@@ -13,16 +14,34 @@ function Users() {
 
   const [email, setEmail] = useState("");
 
+  const [editingId, setEditingId] =
+    useState(null);
+
   async function loadUsers() {
     const data = await getUsers();
 
     setUsers(data);
   }
 
-  async function handleCreateUser() {
+  async function handleSubmit() {
     if (!name || !email) return;
 
-    await createUser(name, email);
+    // EDITAR
+
+    if (editingId) {
+      await updateUser(editingId, {
+        name,
+        email,
+      });
+
+      setEditingId(null);
+    }
+
+    // CREAR
+
+    else {
+      await createUser(name, email);
+    }
 
     setName("");
     setEmail("");
@@ -36,9 +55,13 @@ function Users() {
     loadUsers();
   }
 
-  useEffect(() => {
-    loadUsers();
-  }, []);
+  function handleEdit(user) {
+    setEditingId(user._id);
+
+    setName(user.name);
+
+    setEmail(user.email);
+  }
 
   return (
     <div className="card">
@@ -62,27 +85,46 @@ function Users() {
         }
       />
 
-      <button onClick={handleCreateUser}>
-        Crear Usuario
+      <button onClick={handleSubmit}>
+        {editingId
+          ? "Actualizar Usuario"
+          : "Crear Usuario"}
       </button>
 
       <ul>
         {users.map((user) => (
           <li key={user._id}>
-            <strong>{user.name}</strong>
+            <div>
+              <strong>{user.name}</strong>
 
-            <p>{user.email}</p>
+              <p>{user.email}</p>
+            </div>
 
-            <button
-              onClick={() =>
-                handleDelete(user._id)
-              }
-            >
-              Eliminar
-            </button>
+            <div className="user-actions">
+              <button
+                onClick={() =>
+                  handleEdit(user)
+                }
+              >
+                Editar
+              </button>
+
+              <button
+                onClick={() =>
+                  handleDelete(user._id)
+                }
+              >
+                Eliminar
+              </button>
+            </div>
           </li>
         ))}
       </ul>
+      <div className="actions">
+        <button onClick={loadUsers}>
+          Obtener Usuarios
+        </button>
+      </div>
     </div>
   );
 }
